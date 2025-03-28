@@ -1,0 +1,18 @@
+# Ignore Windows system folders
+AppData/
+NTUSER.*
+*.log
+*.tmp
+Desktop.ini
+Thumbs.db
+
+# Ignore Python virtual environments
+venv/
+__pycache__/
+
+# Ignore database files
+*.sqlite3
+*.db
+
+# Ignore environment variables (if using .env)
+.env
