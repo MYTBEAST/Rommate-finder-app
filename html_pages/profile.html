@@ -18,20 +18,70 @@
       border-radius: 15px;
       box-shadow: 0 8px 30px rgba(241, 7, 163, 0.4);
     }
-    label { font-weight: 600; margin-top: 1rem; display: block; }
-    input, textarea { background: #121212; border: 1px solid #444; color: #eee; border-radius: 6px; padding: 0.5rem; width: 100%; margin-top: 0.3rem; }
-    input:focus, textarea:focus { border-color: #f107a3; outline: none; box-shadow: 0 0 8px #f107a3; }
-    .checkbox-group { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem; }
-    .checkbox-group label { font-weight: 500; cursor: pointer; }
-    .checkbox-group input[type="checkbox"] { margin-right: 0.3rem; accent-color: #f107a3; cursor: pointer; }
-    .btn-save { background: #f107a3; border: none; padding: 0.75rem 2.5rem; border-radius: 50px; font-weight: 700; color: #fff; cursor: pointer; transition: background-color 0.3s ease; margin-top: 2rem; display: block; width: fit-content; }
-    .btn-save:hover { background: #7b2ff7; }
-    .profile-pic-preview { margin-top: 1rem; max-width: 140px; border-radius: 50%; border: 3px solid #f107a3; object-fit: cover; box-shadow: 0 0 10px #f107a3; }
+    label {
+      font-weight: 600;
+      margin-top: 1rem;
+      display: block;
+    }
+    input, textarea {
+      background: #121212;
+      border: 1px solid #444;
+      color: #eee;
+      border-radius: 6px;
+      padding: 0.5rem;
+      width: 100%;
+      margin-top: 0.3rem;
+    }
+    input:focus, textarea:focus {
+      border-color: #f107a3;
+      outline: none;
+      box-shadow: 0 0 8px #f107a3;
+    }
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .checkbox-group label {
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .checkbox-group input[type="checkbox"] {
+      margin-right: 0.3rem;
+      accent-color: #f107a3;
+      cursor: pointer;
+    }
+    .btn-save {
+      background: #f107a3;
+      border: none;
+      padding: 0.75rem 2.5rem;
+      border-radius: 50px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 2rem;
+      display: block;
+      width: fit-content;
+    }
+    .btn-save:hover {
+      background: #7b2ff7;
+    }
+    .profile-pic-preview {
+      margin-top: 1rem;
+      max-width: 140px;
+      border-radius: 50%;
+      border: 3px solid #f107a3;
+      object-fit: cover;
+      box-shadow: 0 0 10px #f107a3;
+    }
   </style>
 </head>
 <body>
   <div class="container mx-auto">
     <h2>Edit Profile</h2>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div>
@@ -41,6 +91,7 @@
         </div>
       {% endif %}
     {% endwith %}
+
     <form method="POST" enctype="multipart/form-data">
       <label for="bio">Bio / About Me</label>
       <textarea id="bio" name="bio" rows="4">{{ user.bio or '' }}</textarea>
@@ -56,7 +107,8 @@
         {% set traits = ['Clean', 'Non-smoker', 'Quiet', 'Outgoing', 'Pet-friendly', 'Early riser', 'Night owl'] %}
         {% for trait in traits %}
           <label>
-            <input type="checkbox" name="preferred_traits" value="{{ trait }}" {% if trait in selected_traits %}checked{% endif %} /> {{ trait }}
+            <input type="checkbox" name="preferred_traits" value="{{ trait }}" {% if trait in selected_traits %}checked{% endif %} />
+            {{ trait }}
           </label>
         {% endfor %}
       </div>
