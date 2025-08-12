@@ -1,20 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Customize Preferences</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: #121212;
+      color: #eee;
+      font-family: 'Poppins', sans-serif;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 700px;
+      background: #1e1e2e;
+      padding: 2rem 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(241, 7, 163, 0.4);
+    }
+    label { font-weight: 600; margin-top: 1rem; display: block; }
+    input, textarea { background: #121212; border: 1px solid #444; color: #eee; border-radius: 6px; padding: 0.5rem; width: 100%; margin-top: 0.3rem; }
+    input:focus, textarea:focus { border-color: #f107a3; outline: none; box-shadow: 0 0 8px #f107a3; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem; }
+    .checkbox-group label { font-weight: 500; cursor: pointer; }
+    .checkbox-group input[type="checkbox"] { margin-right: 0.3rem; accent-color: #f107a3; cursor: pointer; }
+    .btn-save { background: #f107a3; border: none; padding: 0.75rem 2.5rem; border-radius: 50px; font-weight: 700; color: #fff; cursor: pointer; transition: background-color 0.3s ease; margin-top: 2rem; display: block; width: fit-content; }
+    .btn-save:hover { background: #7b2ff7; }
+    .profile-pic-preview { margin-top: 1rem; max-width: 140px; border-radius: 50%; border: 3px solid #f107a3; object-fit: cover; box-shadow: 0 0 10px #f107a3; }
+  </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2 class="text-center">Edit Your Profile</h2>
-        <form method="POST" class="card p-4 shadow-sm bg-white">
-            <label for="preferences" class="form-label">Your Preferences (Roommate, Interests, etc.)</label>
-            <textarea name="preferences" class="form-control" rows="5">{{ user.preferences or '' }}</textarea>
-            <button type="submit" class="btn btn-primary mt-3">Save Preferences</button>
-        </form>
-        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
-    </div>
+<body>
+  <div class="container mx-auto">
+    <h2>Edit Profile</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div>
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <form method="POST" enctype="multipart/form-data">
+      <label for="bio">Bio / About Me</label>
+      <textarea id="bio" name="bio" rows="4">{{ user.bio or '' }}</textarea>
+
+      <label for="likes">Likes</label>
+      <textarea id="likes" name="likes" rows="3" placeholder="What do you like?">{{ user.likes or '' }}</textarea>
+
+      <label for="dislikes">Dislikes</label>
+      <textarea id="dislikes" name="dislikes" rows="3" placeholder="What do you dislike?">{{ user.dislikes or '' }}</textarea>
+
+      <label>Preferred Roommate Traits</label>
+      <div class="checkbox-group">
+        {% set traits = ['Clean', 'Non-smoker', 'Quiet', 'Outgoing', 'Pet-friendly', 'Early riser', 'Night owl'] %}
+        {% for trait in traits %}
+          <label>
+            <input type="checkbox" name="preferred_traits" value="{{ trait }}" {% if trait in selected_traits %}checked{% endif %} /> {{ trait }}
+          </label>
+        {% endfor %}
+      </div>
+
+      <label for="budget">Monthly Budget (₹)</label>
+      <input type="number" id="budget" name="budget" value="{{ user.budget or '' }}" min="0" />
+
+      <label for="profile_pic">Profile Picture</label>
+      <input type="file" id="profile_pic" name="profile_pic" accept="image/*" />
+      {% if user.profile_pic %}
+        <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="Profile Picture" class="profile-pic-preview" />
+      {% endif %}
+
+      <button type="submit" class="btn-save">Save Changes</button>
+    </form>
+  </div>
 </body>
 </html>
