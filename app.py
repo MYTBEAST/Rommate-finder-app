@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__, template_folder='html_pages')
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://<roommate_finder_db_user>:<Cz7Ks8cwycG5TSy4CsQhlhtJIw6rm0hn>@<dpg-d2e8b67diees73dco8og-a>:5432/<roommate_finder_db>'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your_secret_key'
 
