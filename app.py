@@ -2,15 +2,21 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
-import os
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env
+load_dotenv()
 
 app = Flask(__name__, template_folder='html_pages')
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://<roommate_finder_db_user>:<Cz7Ks8cwycG5TSy4CsQhlhtJIw6rm0hn>@<dpg-d2e8b67diees73dco8og-a>:5432/<roommate_finder_db>'
+
+# Load DB URL and SECRET_KEY from environment variables
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
 
 UPLOAD_FOLDER = os.path.join(base_dir, 'static/uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -23,10 +29,8 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 migrate = Migrate(app, db)
 
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,13 +48,11 @@ class User(db.Model):
     def __repr__(self):
         return f"<User {self.name}>"
 
-
 @app.route('/')
 def index():
     if 'user_id' in session:
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -71,7 +73,6 @@ def register():
 
     return render_template('register.html')
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -88,7 +89,6 @@ def login():
 
     return render_template('login.html')
 
-
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
@@ -97,7 +97,6 @@ def dashboard():
 
     user = User.query.get(session['user_id'])
     return render_template('dashboard.html', user=user)
-
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -112,7 +111,6 @@ def profile():
         user.likes = request.form.get('likes', '').strip()
         user.dislikes = request.form.get('dislikes', '').strip()
 
-        # Use try-except for budget in case of invalid input
         try:
             user.budget = int(request.form.get('budget', 0))
         except ValueError:
@@ -124,7 +122,6 @@ def profile():
         file = request.files.get('profile_pic')
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            # Optional: To avoid filename conflicts, add unique prefix (e.g. user id or timestamp)
             filename = f"user_{user.id}_{filename}"
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
@@ -135,16 +132,13 @@ def profile():
         return redirect(url_for('dashboard'))
 
     selected_traits = user.preferred_traits.split(',') if user.preferred_traits else []
-
     return render_template('profile.html', user=user, selected_traits=selected_traits)
-
 
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
-
 
 if __name__ == '__main__':
     with app.app_context():
